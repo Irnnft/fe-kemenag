@@ -1,66 +1,123 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
 
-export default function Home() {
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { User, Lock, LogIn, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { api } from '@/lib/api';
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    username: '', // Berubah dari email ke username sesuai DB
+    password: '',
+  });
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await api.auth.login(formData);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Username atau password salah');
+      }
+
+      // Simpan Token & Data User
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Redirect berdasarkan role (sesuai Enum di DB)
+      if (data.user.role === 'kasi_penmad') {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/operator/dashboard');
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-slate-50 font-sans">
+      {/* Left Panel */}
+      <div className="hidden lg:flex relative bg-emerald-900 overflow-hidden items-center justify-center p-20">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+        <div className="relative z-10 w-full max-w-xl text-center">
+          <div className="inline-flex items-center gap-3 bg-emerald-800/50 backdrop-blur-md px-6 py-3 rounded-2xl border border-emerald-500/30 mb-10 shadow-2xl">
+            <ShieldCheck className="text-emerald-400" size={28} />
+            <span className="text-emerald-200 font-black tracking-widest text-sm uppercase">SI-LAPOR KEMENAG</span>
+          </div>
+          <h1 className="text-7xl font-black text-white leading-[0.9] tracking-tighter mb-8 uppercase text-left">
+            Aplikasi<br />
+            <span className="text-emerald-400 italic">Pelaporan</span><br />
+            Bulanan.
+          </h1>
+          <p className="text-emerald-100 text-xl font-medium leading-relaxed mb-12 text-left border-l-4 border-emerald-500 pl-8 py-2">
+            Sistem Informasi Pelaporan Madrasah Terintegrasi Kantor Kementerian Agama Kabupaten.
           </p>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </div>
+
+      {/* Right Panel */}
+      <div className="flex items-center justify-center p-8 md:p-12 lg:p-24 bg-white relative">
+        <div className="w-full max-w-md my-auto">
+          <div className="mb-12">
+            <h2 className="text-5xl font-black text-slate-900 tracking-tighter leading-tight uppercase mb-4">
+              Log In <br />
+              <span className="text-emerald-700 bg-emerald-50 px-2">SI-LAPOR</span>
+            </h2>
+            <p className="text-slate-500 font-bold text-lg">Gunakan Username Akun anda untuk masuk.</p>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 border-4 border-red-200 p-6 rounded-3xl mb-8 flex items-center gap-4 animate-shake">
+              <AlertCircle className="text-red-600 shrink-0" size={32} />
+              <div>
+                <h4 className="text-red-900 font-black uppercase text-sm tracking-widest">Login Gagal</h4>
+                <p className="text-red-700 font-bold">{error}</p>
+              </div>
+            </div>
+          )}
+
+          <form className="space-y-8" onSubmit={handleLogin}>
+            <Input
+              label="Username Pengguna"
+              type="text"
+              placeholder="admin / op_mi"
+              icon={<User size={24} className="text-slate-400" />}
+              required
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
             />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <Input
+              label="Kata Sandi"
+              type="password"
+              placeholder="••••••••"
+              icon={<Lock size={24} className="text-slate-400" />}
+              required
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            />
+
+            <Button
+              variant="primary"
+              className="w-full py-6 text-xl font-black bg-emerald-900 hover:bg-black transition-all shadow-[0_20px_40px_rgba(0,0,0,0.1)] active:scale-95 group"
+              isLoading={isLoading}
+            >
+              MASUK KEDALAM SISTEM <LogIn className="ml-2 group-hover:translate-x-2 transition-transform" />
+            </Button>
+          </form>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
