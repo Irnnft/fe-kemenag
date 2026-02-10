@@ -180,7 +180,7 @@ th {
   font-size: 1rem;
   padding: 1.5rem 1.25rem;
   border: 2px solid var(--border-strong);
-  text-align: left;
+  text-align: center;
 }
 
 td {
@@ -218,4 +218,17 @@ input[type="checkbox"]:checked {
 
 input[type="checkbox"]:focus {
   box-shadow: 0 0 0 4px rgba(6, 95, 70, 0.2);
+}
+
+/* Hide Number Input Spinners */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }

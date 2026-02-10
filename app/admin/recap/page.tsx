@@ -155,10 +155,15 @@ export default function RecapPage() {
                                                 {item.bulan_tahun}
                                             </div>
                                         </td>
-                                        <td className="px-8 py-8 text-center text-center">
-                                            <span className={`px-4 py-2 rounded-full font-black text-[10px] border-2 uppercase tracking-wide
-                                                ${item.status_laporan === 'verified' ? 'bg-green-100 text-green-800 border-green-300' : 'bg-slate-100 text-slate-500 border-slate-300'}`}>
-                                                {item.status_laporan}
+                                        <td className="px-8 py-8 text-center">
+                                            <span className={`px-4 py-2 rounded-lg font-black text-[10px] border-2 uppercase tracking-wide inline-block shadow-sm
+                                                ${item.status_laporan === 'verified' ? 'bg-emerald-100 text-emerald-900 border-emerald-400' :
+                                                    item.status_laporan === 'revisi' ? 'bg-rose-100 text-rose-900 border-rose-400' :
+                                                        'bg-amber-100 text-amber-900 border-amber-400'}`}>
+                                                {item.status_laporan === 'verified' ? 'DISETUJUI' :
+                                                    item.status_laporan === 'revisi' ? 'REVISI' :
+                                                        item.status_laporan === 'submitted' ? 'MENUNGGU' :
+                                                            item.status_laporan}
                                             </span>
                                         </td>
                                         <td className="px-8 py-8 text-right font-black text-slate-400 text-sm">

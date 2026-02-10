@@ -52,10 +52,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex relative bg-emerald-900 overflow-hidden items-center justify-center p-20">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
         <div className="relative z-10 w-full max-w-xl text-center">
-          <div className="inline-flex items-center gap-3 bg-emerald-800/50 backdrop-blur-md px-6 py-3 rounded-2xl border border-emerald-500/30 mb-10 shadow-2xl">
-            <ShieldCheck className="text-emerald-400" size={28} />
-            <span className="text-emerald-200 font-black tracking-widest text-sm uppercase">SI-LAPOR KEMENAG</span>
-          </div>
+
           <h1 className="text-7xl font-black text-white leading-[0.9] tracking-tighter mb-8 uppercase text-left">
             Aplikasi<br />
             <span className="text-emerald-400 italic">Pelaporan</span><br />
@@ -70,7 +67,7 @@ export default function LoginPage() {
       {/* Right Panel */}
       <div className="flex items-center justify-center p-8 md:p-12 lg:p-24 bg-white relative">
         <div className="w-full max-w-md my-auto">
-          <div className="mb-12">
+          <div className="mb-5">
             <h2 className="text-5xl font-black text-slate-900 tracking-tighter leading-tight uppercase mb-4">
               Log In <br />
               <span className="text-emerald-700 bg-emerald-50 px-2">SI-LAPOR</span>

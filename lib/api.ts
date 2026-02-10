@@ -60,13 +60,17 @@ export const api = {
         createLaporan: (data: any) => apiFetch('/laporan', { method: 'POST', body: JSON.stringify(data) }),
 
         // Match Backend Routes
-        updateSiswa: (id: string, data: any) => apiFetch(`/laporan/${id}/siswa`, { method: 'PUT', body: JSON.stringify(data) }),
-        updateRekapPersonal: (id: string, data: any) => apiFetch(`/laporan/${id}/rekap-personal`, { method: 'PUT', body: JSON.stringify(data) }),
-        updateGuru: (id: string, data: any) => apiFetch(`/laporan/${id}/guru`, { method: 'PUT', body: JSON.stringify(data) }),
-        updateSarpras: (id: string, data: any) => apiFetch(`/laporan/${id}/sarpras`, { method: 'PUT', body: JSON.stringify(data) }),
-        updateMobiler: (id: string, data: any) => apiFetch(`/laporan/${id}/mobiler`, { method: 'PUT', body: JSON.stringify(data) }),
-        updateKeuangan: (id: string, data: any) => apiFetch(`/laporan/${id}/keuangan`, { method: 'PUT', body: JSON.stringify(data) }),
+        updateSiswa: (id: string, data: any) => apiFetch(`/laporan/${id}/siswa`, { method: 'PUT', body: JSON.stringify({ data }) }),
+        updateRekapPersonal: (id: string, data: any) => apiFetch(`/laporan/${id}/rekap-personal`, { method: 'PUT', body: JSON.stringify({ data }) }),
+        updateGuru: (id: string, data: any) => apiFetch(`/laporan/${id}/guru`, { method: 'PUT', body: JSON.stringify({ data }) }),
+        updateSarpras: (id: string, data: any) => apiFetch(`/laporan/${id}/sarpras`, { method: 'PUT', body: JSON.stringify({ data }) }),
+        updateMobiler: (id: string, data: any) => apiFetch(`/laporan/${id}/mobiler`, { method: 'PUT', body: JSON.stringify({ data }) }),
+        updateKeuangan: (id: string, data: any) => apiFetch(`/laporan/${id}/keuangan`, { method: 'PUT', body: JSON.stringify({ data }) }),
 
         submitLaporan: (id: string) => apiFetch(`/laporan/${id}/submit`, { method: 'POST' }),
+
+        // Profile
+        getMyMadrasah: () => apiFetch('/operator/madrasah'),
+        updateMyMadrasah: (data: any) => apiFetch('/operator/madrasah', { method: 'PUT', body: JSON.stringify(data) }),
     }
 };
