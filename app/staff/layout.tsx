@@ -36,7 +36,7 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
             <Sidebar role="staff_penmad" isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
 
-            <div className="flex-1 md:ml-[20rem] transition-all duration-300">
+            <div className="flex-1 min-w-0 md:ml-[20rem] transition-all duration-300">
                 <header className="h-24 bg-white/80 backdrop-blur-md border-b-[3px] border-slate-900 flex items-center px-6 md:px-12 justify-between sticky top-0 z-40">
                     <div className="flex items-center gap-6">
                         <button

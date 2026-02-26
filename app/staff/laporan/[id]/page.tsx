@@ -385,13 +385,13 @@ function ViewGuru({ data }: { data: any[] }) {
                                 <TD className="font-mono text-[10px] tracking-widest text-slate-500">{g.nip_nik || g.nip || g.nik}</TD>
                                 <TD>{g.lp || g.jenis_kelamin}</TD>
                                 <TD className="text-left">{g.tempat_lahir}</TD>
-                                <TD className="text-xs">{g.tanggal_lahir}</TD>
+                                <TD className="text-xs whitespace-nowrap">{g.tanggal_lahir}</TD>
                                 <TD className="text-left uppercase text-[10px] tracking-tight">{g.status_pegawai}</TD>
                                 <TD>{g.pendidikan_terakhir}</TD>
                                 <TD className="text-left text-xs">{g.jurusan}</TD>
                                 <TD>{g.golongan}</TD>
-                                <TD className="text-xs">{g.tmt_mengajar}</TD>
-                                <TD className="text-xs">{g.tmt_di_madrasah}</TD>
+                                <TD className="text-xs whitespace-nowrap">{g.tmt_mengajar}</TD>
+                                <TD className="text-xs whitespace-nowrap">{g.tmt_di_madrasah}</TD>
                                 <TD className="text-left text-xs">{g.mata_pelajaran}</TD>
                                 <TD className="text-left text-xs">{g.satminkal}</TD>
                                 <TD className="font-black">{g.jumlah_jam}</TD>

@@ -220,7 +220,7 @@ export default function LaporanDetailPage({ params }: { params: Promise<{ id: st
                                         </li>
                                         <li className="flex gap-3">
                                             <span className="w-5 h-5 bg-rose-800 rounded-full flex items-center justify-center text-[10px] shrink-0">2</span>
-                                            <span>Jangan lupa klik "SIMPAN" di setiap tab.</span>
+                                            <span>Jangan lupa klik "SIMPAN".</span>
                                         </li>
                                         <li className="flex gap-3">
                                             <span className="w-5 h-5 bg-rose-800 rounded-full flex items-center justify-center text-[10px] shrink-0">3</span>
