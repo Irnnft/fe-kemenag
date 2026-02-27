@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Plus, Edit, Info, Search, Loader2, FileText, Trash2, ChevronDown, Calendar, RotateCcw } from 'lucide-react';
+import { Plus, Edit, Info, Search, Loader2, FileText, Trash2, ChevronDown, Calendar, RotateCcw, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { Input } from '@/components/ui/Input';
 import Link from 'next/link';
 import { api } from '@/lib/api';
@@ -16,6 +17,7 @@ export default function LaporanListPage() {
     const [reports, setReports] = useState<any[]>([]);
     const [selectedNote, setSelectedNote] = useState<string | null>(null);
     const [showTrashed, setShowTrashed] = useState(false);
+    const [exportingId, setExportingId] = useState<string | null>(null);
 
     const fetchReports = async () => {
         setIsLoading(true);
@@ -110,6 +112,170 @@ export default function LaporanListPage() {
                     fetchReports();
                 }
             } catch (e) { alert('Kesalahan koneksi'); }
+        }
+    };
+
+    const handleExportIndividualExcel = async (id: string, bulanStr: string) => {
+        setExportingId(id);
+        try {
+            const response = await api.operator.getLaporanDetail(id);
+            const data = await response.json();
+            const reportData = data.data || data;
+
+            if (!response.ok) {
+                alert('Gagal mengambil detail laporan');
+                return;
+            }
+
+            const workbook = XLSX.utils.book_new();
+
+            // Create a single sheet for all data (Stacked vertically for better accessibility)
+            const ws = XLSX.utils.aoa_to_sheet([
+                ["LAPORAN DIGITAL BULANAN - MIS KAMPAR"],
+                ["Madrasah", reportData.madrasah?.nama_madrasah || "Madrasah Saya"],
+                ["Periode", formatBulan(bulanStr)],
+                ["Status", reportData.status_laporan?.toUpperCase() || "-"],
+                ["Tanggal Ekspor", new Date().toLocaleString('id-ID')],
+                [""], // Spacer
+            ]);
+
+            let currentRow = 7;
+
+            const addSection = (title: string, data: any[], mapper: (item: any) => any) => {
+                // Add Section Header
+                XLSX.utils.sheet_add_aoa(ws, [[title.toUpperCase()]], { origin: `A${currentRow}` });
+                currentRow++;
+
+                if (data && data.length > 0) {
+                    const mappedData = data.map(mapper);
+                    XLSX.utils.sheet_add_json(ws, mappedData, { origin: `A${currentRow}`, skipHeader: false });
+                    currentRow += mappedData.length + 3; // Spacer between sections
+                } else {
+                    XLSX.utils.sheet_add_aoa(ws, [["(Tidak ada data untuk bagian ini)"]], { origin: `A${currentRow}` });
+                    currentRow += 3;
+                }
+            };
+
+            // I. Data Siswa
+            addSection("I. DATA SISWA (ROMBEL & MUTASI)", reportData.siswa, (s) => ({
+                'Kelas': s.kelas,
+                'Rombel': s.jumlah_rombel,
+                'Laki-laki': s.jumlah_lk,
+                'Perempuan': s.jumlah_pr,
+                'Mutasi Masuk': s.mutasi_masuk,
+                'Mutasi Keluar': s.mutasi_keluar,
+                'Keterangan': s.keterangan || '-'
+            }));
+
+            // II. Rekap Personal
+            addSection("II. REKAP DATA PERSONAL", reportData.rekap_personal, (r) => ({
+                'Keadaan/Kategori': r.keadaan,
+                'L': r.jumlah_lk,
+                'P': r.jumlah_pr,
+                'Mutasi Masuk': r.mutasi_masuk,
+                'Mutasi Keluar': r.mutasi_keluar,
+                'Keterangan': r.keterangan || '-'
+            }));
+
+            // III. Data Guru
+            addSection("III. DETAIL GURU & TENAGA KEPENDIDIKAN", reportData.guru, (g) => ({
+                'Nama Lengkap': g.nama_guru,
+                'NIP/NIK': g.nip_nik,
+                'L/P': g.lp,
+                'Tempat Lahir': g.tempat_lahir,
+                'Tanggal Lahir': g.tanggal_lahir,
+                'Status Pegawai': g.status_pegawai,
+                'Pendidikan': g.pendidikan_terakhir,
+                'Jurusan': g.jurusan,
+                'Golongan': g.golongan,
+                'TMT Mengajar': g.tmt_mengajar,
+                'TMT Madrasah': g.tmt_di_madrasah,
+                'Mata Pelajaran': g.mata_pelajaran,
+                'Satminkal': g.satminkal,
+                'Jml Jam': g.jumlah_jam,
+                'Jabatan': g.jabatan,
+                'Ibu Kandung': g.nama_ibu_kandung,
+                'Sertifikasi': g.sertifikasi ? 'YA' : 'TIDAK',
+                'Status Mutasi': g.mutasi_status
+            }));
+
+            // IV. Sarpras
+            addSection("IV. DATA SARANA PRASARANA", reportData.sarpras, (s) => ({
+                'Jenis Aset': s.jenis_aset,
+                'Luas/Volume': s.luas,
+                'Kondisi Baik': s.kondisi_baik,
+                'Rusak Ringan': s.kondisi_rusak_ringan,
+                'Rusak Berat': s.kondisi_rusak_berat,
+                'Kekurangan': s.kekurangan,
+                'Perlu Rehab': s.perlu_rehab,
+                'Keterangan': s.keterangan || '-'
+            }));
+
+            // V. Mobiler
+            addSection("V. DATA MOBILER", reportData.mobiler, (m) => ({
+                'Nama Barang': m.nama_barang,
+                'Total': m.jumlah_total,
+                'Kondisi Baik': m.kondisi_baik,
+                'Rusak Ringan': m.kondisi_rusak_ringan,
+                'Rusak Berat': m.kondisi_rusak_berat,
+                'Kekurangan': m.kekurangan,
+                'Keterangan': m.keterangan || '-'
+            }));
+
+            // VI. Keuangan
+            addSection("VI. DATA KEUANGAN (BOS/NON-BOS)", reportData.keuangan, (k) => ({
+                'Uraian Kegiatan': k.uraian_kegiatan,
+                'Satuan': k.satuan,
+                'Volume': k.volume,
+                'Harga Satuan': k.harga_satuan,
+                'Total': Number(k.volume || 0) * Number(k.harga_satuan || 0)
+            }));
+
+            XLSX.utils.book_append_sheet(workbook, ws, 'LAPORAN LENGKAP');
+
+            // Tambahkan semua kategori sebagai tab terpisah
+            const addTab = (label: string, data: any[], mapper: (item: any) => any) => {
+                if (data && data.length > 0) {
+                    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(data.map(mapper)), label);
+                }
+            };
+
+            addTab('Data Siswa', reportData.siswa, (s) => ({
+                'Kelas': s.kelas, 'Rombel': s.jumlah_rombel, 'L': s.jumlah_lk, 'P': s.jumlah_pr, 'Masuk': s.mutasi_masuk, 'Keluar': s.mutasi_keluar, 'Keterangan': s.keterangan || '-'
+            }));
+
+            addTab('Rekap Personal', reportData.rekap_personal, (r) => ({
+                'Kategori': r.keadaan, 'L': r.jumlah_lk, 'P': r.jumlah_pr, 'Mutasi Masuk': r.mutasi_masuk, 'Mutasi Keluar': r.mutasi_keluar, 'Keterangan': r.keterangan || '-'
+            }));
+
+            addTab('Data Guru', reportData.guru, (g) => ({
+                'Nama': g.nama_guru, 'NIP/NIK': g.nip_nik, 'L/P': g.lp,
+                'Tempat Lahir': g.tempat_lahir, 'Tanggal Lahir': g.tanggal_lahir,
+                'Status': g.status_pegawai, 'Pendidikan': g.pendidikan_terakhir, 'Jurusan': g.jurusan,
+                'Gol': g.golongan, 'TMT Guru': g.tmt_mengajar, 'TMT Madrasah': g.tmt_di_madrasah,
+                'Mapel': g.mata_pelajaran, 'Satminkal': g.satminkal, 'Jam': g.jumlah_jam,
+                'Jabatan': g.jabatan, 'Ibu Kandung': g.nama_ibu_kandung, 'Sertifikasi': g.sertifikasi ? 'YA' : 'TIDAK', 'Mutasi': g.mutasi_status
+            }));
+
+            addTab('Sarpras', reportData.sarpras, (s) => ({
+                'Jenis Aset': s.jenis_aset, 'Luas': s.luas, 'Baik': s.kondisi_baik, 'RR': s.kondisi_rusak_ringan, 'RB': s.kondisi_rusak_berat, 'Kurang': s.kekurangan, 'Rehab': s.perlu_rehab, 'Ket': s.keterangan || '-'
+            }));
+
+            addTab('Mobiler', reportData.mobiler, (m) => ({
+                'Nama Barang': m.nama_barang, 'Total': m.jumlah_total, 'Baik': m.kondisi_baik, 'RR': m.kondisi_rusak_ringan, 'RB': m.kondisi_rusak_berat, 'Kurang': m.kekurangan, 'Ket': m.keterangan || '-'
+            }));
+
+            addTab('Keuangan', reportData.keuangan, (k) => ({
+                'Uraian': k.uraian_kegiatan, 'Satuan': k.satuan, 'Vol': k.volume, 'Harga': k.harga_satuan, 'Total': Number(k.volume || 0) * Number(k.harga_satuan || 0)
+            }));
+
+            const fileName = `Export_Laporan_${formatBulan(bulanStr)}_${new Date().getTime()}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+        } catch (error) {
+            console.error(error);
+            alert('Kesalahan saat ekspor data');
+        } finally {
+            setExportingId(null);
         }
     };
 
@@ -222,7 +388,8 @@ export default function LaporanListPage() {
                                                     <Link href={`/operator/laporan/${report.id_laporan}`} className="w-full">
                                                         <Button
                                                             variant="outline"
-                                                            className="w-full !px-0 !py-2 !text-[10px] !font-black !tracking-wider"
+                                                            size="sm"
+                                                            className="w-full !font-black !tracking-wider"
                                                             icon={<Edit size={14} />}
                                                         >
                                                             {report.status_laporan === 'verified' ? 'LIHAT DATA' : 'KELOLA DATA'}
@@ -230,7 +397,18 @@ export default function LaporanListPage() {
                                                     </Link>
                                                     <Button
                                                         variant="outline"
-                                                        className="w-full !px-0 !py-2 !text-rose-500 !border-rose-200 hover:!bg-rose-50 !text-[10px] !font-black"
+                                                        size="sm"
+                                                        className="w-full !text-emerald-600 !border-emerald-200 hover:!bg-emerald-50 !font-black"
+                                                        icon={<Download size={14} />}
+                                                        onClick={() => handleExportIndividualExcel(report.id_laporan, report.bulan_tahun)}
+                                                        isLoading={exportingId === report.id_laporan}
+                                                    >
+                                                        EKSPOR EXCEL
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="w-full !text-rose-500 !border-rose-200 hover:!bg-rose-50 !font-black"
                                                         icon={<Trash2 size={14} />}
                                                         onClick={() => {
                                                             if (report.status_laporan === 'submitted') {

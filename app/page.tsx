@@ -62,7 +62,7 @@ export default function LoginPage() {
           </div>
 
           <h1 className="text-9xl font-black text-white leading-[0.85] tracking-tighter mb-8 italic">
-            SI-EMIS<br />
+            MIS KAMPAR<br />
             <span className="text-emerald-500">KEMENAG</span>
           </h1>
 

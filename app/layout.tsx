@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'SI Laporan Kemenag',
-  description: 'Sistem Informasi Laporan Kementerian Agama',
+  title: 'MIS KAMPAR',
+  description: 'Management Information System Kementerian Agama Kabupaten Kampar',
 };
 
 export default function RootLayout({

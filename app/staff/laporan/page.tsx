@@ -47,6 +47,8 @@ export default function StaffLaporanPage() {
         return date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }).toUpperCase();
     };
 
+
+
     return (
         <div className="space-y-6 animate-fade-in -mt-6">
             <Card>
@@ -148,6 +150,7 @@ export default function StaffLaporanPage() {
                                                                 PERIKSA DATA
                                                             </Button>
                                                         </Link>
+
                                                         <Button
                                                             variant="outline"
                                                             className="w-full h-11 !text-rose-500 !border-rose-200 hover:!bg-rose-50 !text-[10px] !font-black border-2"

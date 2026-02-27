@@ -8,12 +8,12 @@ import {
     FileText,
     School,
     Users,
-    Printer,
     LogOut,
     Menu,
     ChevronRight,
     Shield
 } from 'lucide-react';
+import { api } from '@/lib/api';
 
 interface SidebarProps {
     role: 'operator_sekolah' | 'staff_penmad' | 'kasi_penmad';
@@ -42,7 +42,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, setIsOpen }) => 
         { href: '/admin/laporan', label: 'RADAR PENGAWASAN', icon: <FileText size={20} /> },
         { href: '/admin/master/madrasah', label: 'DATABASE MADRASAH', icon: <School size={20} /> },
         { href: '/admin/master/users', label: 'KELOLA AKUN SISTEM', icon: <Users size={20} /> },
-        { href: '/admin/recap', label: 'REKAPITULASI', icon: <Printer size={20} /> },
         { href: '/admin/audit', label: 'AUDIT JEJAK DIGITAL', icon: <Shield size={20} /> },
     ];
 
@@ -76,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, setIsOpen }) => 
                         </div>
                         <div>
                             <h1 className="font-black text-slate-900 leading-none tracking-tight text-3xl italic">
-                                SI-EMIS
+                                MIS KAMPAR
                             </h1>
                             <p className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.15em] leading-none mt-2">
                                 KEMENAG KAB. KAMPAR
@@ -121,9 +120,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, setIsOpen }) => 
                     </div>
 
                     <button
-                        onClick={() => {
+                        onClick={async () => {
                             if (confirm('Konfirmasi Keluar dari Sistem?')) {
-                                window.location.href = '/';
+                                try {
+                                    await api.auth.logout();
+                                } catch (error) {
+                                    console.error('Logout failed:', error);
+                                } finally {
+                                    localStorage.removeItem('token');
+                                    localStorage.removeItem('user');
+                                    window.location.href = '/';
+                                }
                             }
                         }}
                         className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-rose-500 font-black text-[11px] uppercase tracking-widest hover:bg-rose-50 transition-all border-2 border-transparent hover:border-rose-100 group"
