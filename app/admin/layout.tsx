@@ -7,7 +7,15 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
+    // Side Effect: Auto-hide on mobile initially
+    React.useEffect(() => {
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+            setSidebarOpen(false);
+        }
+    }, []);
+
     const pathname = usePathname();
     const router = useRouter();
 
@@ -36,14 +44,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Sidebar role="kasi_penmad" isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
 
-            <div className="flex-1 min-w-0 md:ml-[20rem] transition-all duration-300">
+            <div className={`flex-1 min-w-0 transition-all duration-500 ease-in-out ${sidebarOpen ? 'md:ml-[20rem]' : 'md:ml-0'}`}>
                 <header className="h-24 bg-white/80 backdrop-blur-md border-b-[3px] border-slate-900 flex items-center px-6 md:px-12 justify-between sticky top-0 z-40">
                     <div className="flex items-center gap-6">
                         <button
-                            className="md:hidden p-4 hover:bg-slate-100 rounded-2xl border-[3px] border-slate-900 shadow-[4px_4px_0_0_#0f172a] transition-all active:translate-y-1 active:shadow-none bg-white"
+                            className="p-3.5 hover:bg-slate-900 hover:text-white rounded-2xl border-[3px] border-slate-900 shadow-[4px_4px_0_0_#0f172a] transition-all active:translate-y-1 active:shadow-none bg-white group"
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                         >
-                            <Menu size={24} className="text-slate-900" />
+                            <Menu size={22} className="transition-transform group-hover:rotate-90 duration-300" />
                         </button>
                         <div className="flex flex-col">
                             <h2 className="font-black text-2xl leading-none text-slate-900 italic tracking-tighter">{getTitle()}</h2>

@@ -65,7 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, setIsOpen }) => 
 
             {/* Sidebar */}
             <aside
-                className={`fixed left-4 top-4 bottom-4 w-72 bg-white border-[3px] border-slate-900 z-50 rounded-[2.5rem] shadow-[8px_8px_0_0_#0f172a] transition-all duration-500 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)] md:translate-x-0'}`}
+                className={`fixed left-4 top-4 bottom-4 w-72 bg-white border-[3px] border-slate-900 z-50 rounded-[2.5rem] shadow-[8px_8px_0_0_#0f172a] transition-all duration-500 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)]'}`}
             >
                 {/* Logo Section */}
                 <div className="p-8 pb-6 border-b-2 border-slate-100">
