@@ -70,8 +70,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, setIsOpen }) => 
                 {/* Logo Section */}
                 <div className="p-8 pb-6 border-b-2 border-slate-100">
                     <div className="flex flex-col items-center text-center gap-3">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 border-[3px] border-slate-900 flex items-center justify-center text-white shadow-[6px_6px_0_0_#0f172a] transition-transform hover:scale-105">
-                            <School size={32} strokeWidth={2.5} />
+                        <div className="w-20 h-20 rounded-2xl bg-white border-[3px] border-slate-900 flex items-center justify-center shadow-[6px_6px_0_0_#0f172a] transition-transform hover:scale-105 overflow-hidden p-2">
+                            <img src="/logo.png" alt="Logo Kemenag" className="w-full h-full object-contain" />
                         </div>
                         <div>
                             <h1 className="font-black text-slate-900 leading-none tracking-tight text-3xl italic">

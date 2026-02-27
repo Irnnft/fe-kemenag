@@ -57,8 +57,8 @@ export default function LoginPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border-[100px] border-slate-800/30 rounded-full blur-3xl" />
 
         <div className="relative z-10 max-w-4xl text-left">
-          <div className="w-20 h-20 bg-emerald-500 rounded-2xl border-4 border-slate-900 flex items-center justify-center text-slate-900 mb-10 shadow-[8px_8px_0_0_#ffffff20]">
-            <School size={40} strokeWidth={2.5} />
+          <div className="w-24 h-24 bg-white rounded-3xl border-4 border-slate-900 flex items-center justify-center mb-10 shadow-[8px_8px_0_0_#ffffff20] overflow-hidden p-3">
+            <img src="/logo.png" alt="Logo Kemenag" className="w-full h-full object-contain" />
           </div>
 
           <h1 className="text-9xl font-black text-white leading-[0.85] tracking-tighter mb-8 italic">
