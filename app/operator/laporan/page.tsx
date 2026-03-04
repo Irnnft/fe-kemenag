@@ -131,7 +131,7 @@ export default function LaporanListPage() {
 
             // Create a single sheet for all data (Stacked vertically for better accessibility)
             const ws = XLSX.utils.aoa_to_sheet([
-                ["LAPORAN DIGITAL BULANAN - MIS KAMPAR"],
+                ["LAPORAN DIGITAL BULANAN - SIPELMAD"],
                 ["Madrasah", reportData.madrasah?.nama_madrasah || "Madrasah Saya"],
                 ["Periode", formatBulan(bulanStr)],
                 ["Status", reportData.status_laporan?.toUpperCase() || "-"],

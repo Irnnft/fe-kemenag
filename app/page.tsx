@@ -62,14 +62,14 @@ export default function LoginPage() {
           </div>
 
           <h1 className="text-9xl font-black text-white leading-[0.85] tracking-tighter mb-8 italic">
-            MIS KAMPAR<br />
+            SIPELMAD<br />
             <span className="text-emerald-500">KEMENAG</span>
           </h1>
 
           <div className="flex items-center gap-6 border-l-4 border-emerald-500 pl-8">
             <div>
-              <p className="text-2xl font-bold text-slate-400 leading-tight">Sistem Informasi Pelaporan</p>
-              <p className="text-2xl font-bold text-slate-500 leading-tight">Madrasah Terintegrasi</p>
+              <p className="text-2xl font-bold text-slate-400 leading-tight">Sistem Informasi Pelaporan Madrasah</p>
+              <p className="text-2xl font-bold text-slate-500 leading-tight">Layanan Terintegrasi</p>
             </div>
           </div>
         </div>

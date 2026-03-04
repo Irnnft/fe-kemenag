@@ -203,7 +203,7 @@ export default function KasiLaporanPage() {
 
             // Create a single sheet for all data (Stacked vertically)
             const ws = XLSX.utils.aoa_to_sheet([
-                ["LAPORAN DIGITAL BULANAN - MIS KAMPAR"],
+                ["LAPORAN DIGITAL BULANAN - SIPELMAD"],
                 ["Madrasah", report.madrasah?.nama_madrasah || "-"],
                 ["Kecamatan", report.madrasah?.kecamatan || "-"],
                 ["Periode", formatBulan(report.bulan_tahun)],
@@ -381,6 +381,7 @@ export default function KasiLaporanPage() {
                                     <option value="MI">MI (IBTIDAIYAH)</option>
                                     <option value="MTS">MTS (TSANAWIYAH)</option>
                                     <option value="MA">MA (ALIYAH)</option>
+                                    <option value="SD">RA (RAUDATUL ATHFAL)</option>
                                 </select>
                                 <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                             </div>

@@ -75,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, setIsOpen }) => 
                         </div>
                         <div>
                             <h1 className="font-black text-slate-900 leading-none tracking-tight text-3xl italic">
-                                MIS KAMPAR
+                                SIPELMAD
                             </h1>
                             <p className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.15em] leading-none mt-2">
                                 KEMENAG KAB. KAMPAR

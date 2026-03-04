@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'MIS KAMPAR',
-  description: 'Management Information System Kementerian Agama Kabupaten Kampar',
+  title: 'SIPELMAD',
+  description: 'Sistem Informasi Pelaporan Madrasah Kementerian Agama Kabupaten Kampar',
   icons: {
     icon: '/logo.png',
   },
