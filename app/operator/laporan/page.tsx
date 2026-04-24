@@ -353,7 +353,7 @@ export default function LaporanListPage() {
                                 <th>BULAN / TAHUN</th>
                                 <th>STATUS LAPORAN</th>
                                 <th>TERAKHIR UPDATE</th>
-                                <th className="text-right">NAVIGASI</th>
+                                <th className="text-center">NAVIGASI</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -374,7 +374,7 @@ export default function LaporanListPage() {
                                                             'bg-rose-100 text-rose-900 border-rose-300'
                                                 }`}
                                             >
-                                                {report.status_laporan === 'revisi' ? 'PERLU PERBAIKAN' : report.status_laporan}
+                                                {report.status_laporan === 'revisi' ? 'REVISI' : report.status_laporan}
                                             </span>
                                             {/* Button revisi removed as requested */}
                                         </div>
@@ -382,15 +382,15 @@ export default function LaporanListPage() {
                                     <td className="text-slate-400 font-bold text-sm uppercase">
                                         {report.updated_at ? new Date(report.updated_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                                     </td>
-                                    <td className="text-right py-4">
-                                        <div className="flex flex-col items-end gap-2">
+                                    <td className="text-center py-4">
+                                        <div className="flex justify-center items-center gap-2">
                                             {!showTrashed ? (
-                                                <div className="flex flex-col gap-1.5 w-full max-w-[120px]">
-                                                    <Link href={`/operator/laporan/${report.id_laporan}`} className="w-full">
+                                                <div className="flex flex-row gap-2">
+                                                    <Link href={`/operator/laporan/${report.id_laporan}`}>
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="w-full !font-black !tracking-wider"
+                                                            className="!font-black !tracking-wider !border-slate-200"
                                                             icon={<Edit size={14} />}
                                                         >
                                                             {report.status_laporan === 'verified' ? 'LIHAT DATA' : 'KELOLA DATA'}
@@ -399,7 +399,7 @@ export default function LaporanListPage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="w-full !text-emerald-600 !border-emerald-200 hover:!bg-emerald-50 !font-black"
+                                                        className="!text-emerald-600 !border-emerald-200 hover:!bg-emerald-50 !font-black"
                                                         icon={<Download size={14} />}
                                                         onClick={() => handleExportIndividualExcel(report.id_laporan, report.bulan_tahun)}
                                                         isLoading={exportingId === report.id_laporan}
@@ -409,7 +409,7 @@ export default function LaporanListPage() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="w-full !text-rose-500 !border-rose-200 hover:!bg-rose-50 !font-black"
+                                                        className="!text-rose-500 !border-rose-200 hover:!bg-rose-50 !font-black"
                                                         icon={<Trash2 size={14} />}
                                                         onClick={() => {
                                                             if (report.status_laporan === 'submitted') {
@@ -424,10 +424,10 @@ export default function LaporanListPage() {
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <div className="flex flex-col gap-1.5 w-full max-w-[120px]">
+                                                <div className="flex flex-row gap-2">
                                                     <Button
                                                         variant="outline"
-                                                        className="w-full !px-0 !py-2 !bg-emerald-50 !text-emerald-700 !border-emerald-200 !text-[10px] !font-black"
+                                                        className="!px-4 !py-2 !bg-emerald-50 !text-emerald-700 !border-emerald-200 !text-[10px] !font-black"
                                                         icon={<RotateCcw size={14} />}
                                                         onClick={() => handleRestore(report.id_laporan)}
                                                     >
@@ -435,7 +435,7 @@ export default function LaporanListPage() {
                                                     </Button>
                                                     <Button
                                                         variant="danger"
-                                                        className="w-full !px-0 !py-2 !text-[10px] !font-black"
+                                                        className="!px-4 !py-2 !text-[10px] !font-black"
                                                         icon={<Trash2 size={14} />}
                                                         onClick={() => handlePermanentDelete(report.id_laporan)}
                                                     >

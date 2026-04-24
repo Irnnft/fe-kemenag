@@ -64,10 +64,7 @@ export default function ProfilMadrasahPage() {
     return (
         <div className="space-y-10 pb-20">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter italic leading-none">Profil Madrasah</h1>
-                    <p className="text-lg font-bold text-slate-500 mt-2 uppercase tracking-wide">Data identitas dan kontak lembaga.</p>
-                </div>
+                <div />
                 <Button
                     className="w-full md:w-auto py-6 px-10 text-xl font-black bg-emerald-700 shadow-xl"
                     icon={<Save size={24} />}
