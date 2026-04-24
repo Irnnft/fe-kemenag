@@ -39,12 +39,24 @@ export default function LaporanListPage() {
         fetchReports();
     }, [showTrashed]);
 
+    const formatBulan = (dateStr: string) => {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }).toUpperCase();
+    };
+
     const filteredReports = useMemo(() => {
         return reports.filter(report => {
-            const date = report.bulan_tahun || '';
+            const dateStr = report.bulan_tahun || '';
             const status = report.status_laporan || '';
+            const query = searchQuery.toLowerCase();
 
-            const matchesSearch = date.includes(searchQuery);
+            // Cek di raw data (2026-08...) dan di tampilan terformat (AGUSTUS 2026)
+            const formattedMonth = formatBulan(dateStr).toLowerCase();
+
+            const matchesSearch = dateStr.toLowerCase().includes(query) || 
+                                formattedMonth.includes(query);
+                                
             const matchesStatus = statusFilter === 'Semua Status' || status.toLowerCase() === statusFilter.toLowerCase();
             return matchesSearch && matchesStatus;
         });
@@ -70,11 +82,6 @@ export default function LaporanListPage() {
         }
     };
 
-    const formatBulan = (dateStr: string) => {
-        if (!dateStr) return '-';
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }).toUpperCase();
-    };
 
     const handleDelete = async (id: string, status: string) => {
         if (status === 'submitted') {
@@ -281,25 +288,9 @@ export default function LaporanListPage() {
 
     return (
         <div className="space-y-12 animate-fade-in">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-                <div>
-                    <h1 className="text-slate-900 italic">Daftar Laporan {showTrashed && '(TEMPAT SAMPAH)'}</h1>
-                    <p className="text-muted text-sm uppercase mt-2">Kelola arsip pelaporan madrasah rutin anda secara digital.</p>
-                </div>
-                <Button
-                    variant="primary"
-                    size="lg"
-                    icon={<Plus size={28} />}
-                    onClick={handleCreateLaporan}
-                    className="shadow-2xl"
-                >
-                    BUAT LAPORAN BARU
-                </Button>
-            </div>
-
             <Card>
-                <div className="flex flex-col md:flex-row gap-8 mb-12 items-end">
-                    <div className="flex-1">
+                <div className="flex flex-col md:flex-row gap-6 mb-12 items-end">
+                    <div className="flex-1 w-full">
                         <Input
                             label="Cari Periode Laporan"
                             placeholder="YYYY-MM..."
@@ -333,9 +324,19 @@ export default function LaporanListPage() {
                             variant={showTrashed ? 'primary' : 'outline'}
                             icon={<Trash2 size={20} />}
                             onClick={() => setShowTrashed(!showTrashed)}
-                            className="w-full md:w-auto h-14 rounded-2xl border-2 px-8"
+                            className="w-full md:w-auto h-14 rounded-2xl border-2 px-8 font-black"
                         >
                             {showTrashed ? 'LIHAT DATA AKTIF' : 'TEMPAT SAMPAH'}
+                        </Button>
+                    </div>
+                    <div className="w-full md:w-auto">
+                        <Button
+                            variant="primary"
+                            icon={<Plus size={22} />}
+                            onClick={handleCreateLaporan}
+                            className="w-full md:w-auto h-14 rounded-2xl px-10 font-black shadow-xl"
+                        >
+                            BUAT LAPORAN BARU
                         </Button>
                     </div>
                 </div>

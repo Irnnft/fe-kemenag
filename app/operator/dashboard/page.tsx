@@ -64,21 +64,6 @@ export default function OperatorDashboard() {
     return (
         <div className="space-y-12 pb-20 animate-fade-in">
             {/* Header: Title & Action Status */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-slate-900 italic">Panduan & Tutorial Sistem</h1>
-                    <p className="text-muted text-sm uppercase mt-2 font-bold tracking-tight text-blue-600">Pelajari instruksi penggunaan SIPELMAD untuk kelancaran operasional madrasah.</p>
-                </div>
-                <div className="flex items-center gap-4 bg-white border-2 border-slate-900 px-6 py-3 rounded-2xl shadow-[4px_4px_0_0_#0f172a]">
-                    <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-700">
-                        <Sparkles size={24} />
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status Navigasi</p>
-                        <p className="text-xs font-black text-slate-900 uppercase">Pusat Bantuan Aktif</p>
-                    </div>
-                </div>
-            </div>
 
             {/* Quick Tutorial Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
