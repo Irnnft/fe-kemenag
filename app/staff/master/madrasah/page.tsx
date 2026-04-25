@@ -307,7 +307,7 @@ export default function StaffMasterMadrasahPage() {
                         placeholder="Contoh: MIS Al-Ittihad"
                     />
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Alamat Domisili</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Alamat Lengkap</label>
                         <textarea
                             className="w-full min-h-[100px] p-5 bg-slate-50 border-2 border-slate-100 rounded-3xl text-slate-900 font-bold text-sm focus:outline-none focus:border-amber-500 transition-all resize-none"
                             value={formData.alamat}
@@ -323,7 +323,7 @@ export default function StaffMasterMadrasahPage() {
                                 onChange={(e) => setFormData({ ...formData, kecamatan: e.target.value })}
                                 required
                             >
-                                <option value="">-- ILIH KECAMATAN --</option>
+                                <option value="">PILIH KECAMATAN</option>
                                 {KECAMATAN_KAMPAR.map(k => (
                                     <option key={k} value={k}>{k}</option>
                                 ))}

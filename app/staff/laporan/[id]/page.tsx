@@ -176,25 +176,6 @@ export default function StaffDetailLaporanPage({ params }: { params: Promise<{ i
                             onChange={(e) => setCatatanRevisi(e.target.value)}
                             disabled={reportData?.status_laporan === 'verified'}
                         />
-                        {reportData?.status_laporan !== 'verified' && (
-                            <div className="mt-4 flex gap-3">
-                                <Button
-                                    variant="danger"
-                                    className="flex-1 !py-4"
-                                    icon={<XCircle size={18} />}
-                                    onClick={() => handleAction('revisi')}
-                                    isLoading={isProcessing}>
-                                    KIRIM REVISI
-                                </Button>
-                                <Button
-                                    className="flex-1 !py-4 !bg-emerald-600 hover:!bg-emerald-700"
-                                    icon={<CheckCircle size={18} />}
-                                    onClick={() => handleAction('verified')}
-                                    isLoading={isProcessing}>
-                                    SETUJUI
-                                </Button>
-                            </div>
-                        )}
                     </Card>
 
                     <Card title="REKAM JEJAK SUBMISSION">

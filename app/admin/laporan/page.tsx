@@ -315,8 +315,6 @@ export default function KasiLaporanPage() {
                     <div className="flex flex-col gap-6">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="space-y-1">
-                                <h2 className="font-black text-2xl text-slate-900 tracking-tight uppercase">Radar Pengawasan</h2>
-                                <p className="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase">Otoritas Kasi Penmad (Oversight)</p>
                             </div>
 
                             <div className="flex items-center gap-3">

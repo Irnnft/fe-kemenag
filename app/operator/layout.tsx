@@ -66,7 +66,7 @@ export default function OperatorLayout({ children }: { children: React.ReactNode
                             className="flex items-center gap-4 pl-6 border-l-2 border-slate-100 transition-all group"
                         >
                             <div className="text-right hidden sm:block">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status Operator</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status Operator Madrasah</p>
                                 <p className="text-xs font-black text-slate-900 uppercase">
                                     {userName}
                                 </p>

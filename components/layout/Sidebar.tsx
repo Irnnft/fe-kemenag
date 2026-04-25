@@ -31,17 +31,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, setIsOpen }) => 
     ];
 
     const staffLinks = [
-        { href: '/staff/dashboard', label: 'DASHBOARD KERJA', icon: <LayoutDashboard size={20} /> },
+        { href: '/staff/dashboard', label: 'DASHBOARD', icon: <LayoutDashboard size={20} /> },
         { href: '/staff/laporan', label: 'VALIDASI LAPORAN', icon: <FileText size={20} /> },
         { href: '/staff/master/madrasah', label: 'MASTER MADRASAH', icon: <School size={20} /> },
         { href: '/staff/master/users', label: 'KELOLA USER', icon: <Users size={20} /> },
     ];
 
     const kasiLinks = [
-        { href: '/admin/dashboard', label: 'RADAR MONITORING', icon: <LayoutDashboard size={20} /> },
-        { href: '/admin/laporan', label: 'RADAR PENGAWASAN', icon: <FileText size={20} /> },
-        { href: '/admin/master/madrasah', label: 'DATABASE MADRASAH', icon: <School size={20} /> },
-        { href: '/admin/master/users', label: 'KELOLA AKUN SISTEM', icon: <Users size={20} /> },
+        { href: '/admin/dashboard', label: 'DASHBOARD', icon: <LayoutDashboard size={20} /> },
+        { href: '/admin/laporan', label: 'PENGAWASAN LAPORAN', icon: <FileText size={20} /> },
+        { href: '/admin/master/madrasah', label: 'MASTER MADRASAH', icon: <School size={20} /> },
+        { href: '/admin/master/users', label: 'KELOLA USER', icon: <Users size={20} /> },
         { href: '/admin/audit', label: 'AUDIT JEJAK DIGITAL', icon: <Shield size={20} /> },
     ];
 

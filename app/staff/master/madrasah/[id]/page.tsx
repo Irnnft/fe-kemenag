@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { api } from '@/lib/api';
 import {
-    ArrowLeft,
     School as SchoolIcon,
     MapPin,
     Phone,
@@ -19,8 +18,6 @@ import {
     Loader2,
     Building2,
     Users,
-    FileText,
-    ArrowRight
 } from 'lucide-react';
 
 export default function DetailMadrasahPage() {
@@ -66,19 +63,6 @@ export default function DetailMadrasahPage() {
 
     return (
         <div className="space-y-8 pb-10">
-            {/* Header Navigation */}
-            <div className="flex items-center gap-4">
-                <Button
-                    variant="outline"
-                    icon={<ArrowLeft size={26} strokeWidth={3} className="text-slate-900" />}
-                    className="w-12 h-12 p-0 rounded-xl border-2 border-slate-200 shadow-sm hover:border-emerald-500 hover:text-emerald-700 flex items-center justify-center bg-white"
-                    onClick={() => router.back()}
-                />
-                <div>
-                    <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight">Profil Madrasah</h1>
-                    <p className="text-slate-500 font-bold text-sm">Detail data dan informasi sekolah</p>
-                </div>
-            </div>
 
             {/* Main Profile Header */}
             <div className="bg-white rounded-[2.5rem] p-8 border-2 border-slate-100 shadow-sm relative overflow-hidden">
@@ -101,7 +85,7 @@ export default function DetailMadrasahPage() {
                                 </div>
                                 <div className={`px-4 py-1.5 rounded-lg border text-sm font-black tracking-wider flex items-center gap-2 ${school.status_aktif == 1 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`}>
                                     {school.status_aktif == 1 ? (
-                                        <><CheckCircle2 size={16} /> AKTIF BEROPERASI</>
+                                        <><CheckCircle2 size={16} /> AKTIF</>
                                     ) : (
                                         <><XCircle size={16} /> NON-AKTIF</>
                                     )}
@@ -125,160 +109,120 @@ export default function DetailMadrasahPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Row 1: Academic (Left) & Status (Right) */}
-                <div className="lg:col-span-2">
-                    <Card title="Informasi Akademik & Kelembagaan" className="h-full">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
-                            <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                                    <Award size={14} /> Akreditasi
-                                </label>
-                                <p className="text-xl font-bold text-slate-900">{school.akreditasi || 'Belum Terakreditasi'}</p>
-                            </div>
-                            <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                                    <Calendar size={14} /> Tahun Berdiri
-                                </label>
-                                <p className="text-xl font-bold text-slate-900">{school.tahun_berdiri || '-'}</p>
-                            </div>
-                            <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                                    <SchoolIcon size={14} /> Status Madrasah
-                                </label>
-                                <p className="text-xl font-bold text-slate-900 uppercase">{school.status_madrasah || '-'}</p>
-                            </div>
-                            <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                                    <MapPin size={14} /> Lokasi (Lat, Long)
-                                </label>
-                                <p className="text-base font-bold text-slate-900 font-mono">
-                                    {school.latitude || '-'}, {school.longitude || '-'}
-                                </p>
-                            </div>
+            {/* THE ONE CARD - EVERYTHING INTEGRATED */}
+            <Card className="overflow-hidden">
+                <div className="space-y-12">
+                    
+                    {/* Part 1: Academic Stats (4 Columns) */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div>
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                <Award size={14} className="text-emerald-500" /> Akreditasi
+                            </label>
+                            <p className="text-xl font-bold text-slate-900">{school.akreditasi || 'Belum Terakreditasi'}</p>
                         </div>
-                    </Card>
-                </div>
-
-                <div className="lg:col-span-1">
-                    <div className="bg-emerald-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl h-full flex flex-col justify-center">
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-20"></div>
-
-                        <h3 className="text-xl font-black uppercase mb-6 flex items-center gap-3 relative z-10">
-                            <FileText className="text-emerald-100" />
-                            Status Laporan
-                        </h3>
-
-                        {school.laporan_terakhir || school.latest_laporan ? (
-                            <div className="space-y-4 relative z-10">
-                                <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-                                    <p className="text-[10px] font-black text-emerald-100 uppercase tracking-widest mb-1">Periode Terakhir</p>
-                                    <p className="text-xl font-black uppercase italic tracking-tighter">
-                                        {school.laporan_terakhir?.bulan_tahun || school.latest_laporan?.bulan_tahun || 'Maret 2026'}
-                                    </p>
-                                </div>
-
-                                <div className="flex items-center justify-between bg-white px-4 py-3 rounded-xl shadow-lg border-2 border-emerald-700">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                            <CheckCircle2 size={16} />
-                                        </div>
-                                        <span className="font-black text-emerald-900 uppercase text-[10px] tracking-widest">
-                                            {school.laporan_terakhir?.status_laporan || 'Terverifikasi'}
-                                        </span>
-                                    </div>
-                                    <ArrowRight size={16} className="text-emerald-300" />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="p-6 bg-white/5 rounded-xl border border-white/10 text-center relative z-10">
-                                <p className="text-emerald-100/50 font-bold text-xs italic">Belum ada riwayat laporan</p>
-                            </div>
-                        )}
-
-                        <div className="mt-6 text-[9px] font-bold text-emerald-100/60 uppercase tracking-widest text-center italic relative z-10">
-                            Sinkronisasi EMIS: {new Date().toLocaleDateString('id-ID')}
+                        <div>
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                <Calendar size={14} className="text-emerald-500" /> Tahun Berdiri
+                            </label>
+                            <p className="text-xl font-bold text-slate-900">{school.tahun_berdiri || '-'}</p>
+                        </div>
+                        <div>
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                <SchoolIcon size={14} className="text-emerald-500" /> Status Madrasah
+                            </label>
+                            <p className="text-xl font-bold text-slate-900 uppercase">{school.status_madrasah || '-'}</p>
+                        </div>
+                        <div>
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                <MapPin size={14} className="text-emerald-500" /> Lokasi
+                            </label>
+                            <p className="text-base font-bold text-slate-900 font-mono">
+                                {school.latitude}, {school.longitude}
+                            </p>
                         </div>
                     </div>
-                </div>
 
-                {/* Row 2: Contact (Left) & Operator (Right) */}
-                <div className="lg:col-span-2">
-                    <Card title="Kontak & Kepala Madrasah" className="h-full">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
-                            <div className="col-span-1 md:col-span-2 p-6 bg-slate-50 rounded-2xl border border-slate-200 md:flex items-center gap-6">
-                                <div className="w-16 h-16 bg-white rounded-full border-4 border-slate-200 flex items-center justify-center text-slate-400 shadow-sm shrink-0 mx-auto md:mx-0 mb-4 md:mb-0">
+                    <div className="h-px bg-slate-100" />
+
+                    {/* Part 2: Contact & Operator (Two Columns Side-by-Side) */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        
+                        {/* Left: Contact & Headmaster */}
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-3">
+                                <div className="w-1.5 h-6 bg-emerald-500 rounded-full" />
+                                <h3 className="text-xl font-black uppercase tracking-tight text-slate-900">Kontak & Kepala</h3>
+                            </div>
+
+                            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 flex items-center gap-6">
+                                <div className="w-16 h-16 bg-white rounded-full border-4 border-slate-200 flex items-center justify-center text-slate-400 shadow-sm shrink-0">
                                     <User size={32} />
                                 </div>
-                                <div className="text-center md:text-left">
+                                <div>
                                     <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Kepala Madrasah</label>
                                     <p className="text-xl font-black text-slate-900 uppercase">{school.nama_kepala || 'Belum Diisi'}</p>
                                     <p className="text-sm font-bold text-slate-500 mt-1">NIP: {school.nip_kepala || '-'}</p>
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                                    <Phone size={14} /> Nomor Telepon
-                                </label>
-                                <p className="text-lg font-bold text-slate-900">{school.telp_kepala || '-'}</p>
-                            </div>
-                            <div>
-                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                                    <Mail size={14} /> Email Madrasah
-                                </label>
-                                <p className="text-lg font-bold text-slate-900 truncate" title={school.email_madrasah}>
-                                    {school.email_madrasah || '-'}
-                                </p>
+                            <div className="grid grid-cols-2 gap-8">
+                                <div>
+                                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                        <Phone size={14} /> Telepon
+                                    </label>
+                                    <p className="text-lg font-bold text-slate-900">{school.telp_kepala || '-'}</p>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                        <Mail size={14} /> Email
+                                    </label>
+                                    <p className="text-lg font-bold text-slate-900 truncate" title={school.email_madrasah}>
+                                        {school.email_madrasah || '-'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </Card>
-                </div>
 
-                <div className="lg:col-span-1">
-                    <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl h-full flex flex-col justify-center">
-                        <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-20"></div>
+                        {/* Right: Operator Accounts */}
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-3">
+                                <div className="w-1.5 h-6 bg-emerald-500 rounded-full" />
+                                <h3 className="text-xl font-black uppercase tracking-tight text-slate-900">Akun Operator</h3>
+                            </div>
 
-                        <h3 className="text-xl font-black uppercase mb-6 flex items-center gap-3 relative z-10">
-                            <Users className="text-emerald-400" />
-                            Akun Operator
-                        </h3>
-
-                        {school.users && school.users.length > 0 ? (
-                            <div className="space-y-4 relative z-10">
-                                {school.users.map((user: any) => (
-                                    <div key={user.id} className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 hover:bg-white/20 transition-colors">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs">
-                                                OP
+                            <div className="space-y-4">
+                                {school.users && school.users.length > 0 ? (
+                                    school.users.map((user: any) => (
+                                        <div key={user.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex justify-between items-center group hover:border-emerald-200 transition-colors">
+                                            <div>
+                                                <p className="font-bold text-base text-slate-900">{user.name || user.username}</p>
+                                                <p className="text-xs font-black text-slate-400 uppercase tracking-tighter mt-0.5">{user.role?.replace('_', ' ')}</p>
                                             </div>
-                                            <p className="font-bold text-sm tracking-wide">{user.username}</p>
+                                            <div className="flex items-center gap-2 text-[10px] font-black text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
+                                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                                AKTIF
+                                            </div>
                                         </div>
-                                        <div className="flex justify-between items-center text-xs text-slate-400 pl-11">
-                                            <span className="uppercase tracking-widest font-bold tracking-tighter">{user.role?.replace('_', ' ')}</span>
-                                            <span className="text-emerald-400 font-black">Online</span>
-                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-8 bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-center text-slate-400 font-bold italic">
+                                        Belum ada operator terdaftar
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="p-6 bg-white/5 rounded-xl border border-white/10 text-center text-slate-400 text-sm font-bold italic">
-                                Belum ada operator terdaftar
-                            </div>
-                        )}
+                                )}
 
-                        <div className="mt-8 pt-6 border-t border-white/10 relative z-10">
-                            <Button
-                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3"
-                                onClick={() => router.push('/staff/master/users')} // Direct to user management
-                            >
-                                KELOLA OPERATOR
-                            </Button>
+                                <Button
+                                    className="w-full btn-primary py-4 shadow-lg shadow-emerald-900/10 mt-4"
+                                    onClick={() => router.push('/staff/master/users')}
+                                >
+                                    KELOLA AKSES OPERATOR
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </Card>
+
         </div>
     );
 }
-

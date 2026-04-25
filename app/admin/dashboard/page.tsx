@@ -248,18 +248,6 @@ export default function KasiDashboard() {
                                 </div>
                             </div>
 
-                            <div className="bg-slate-900 p-8 rounded-[2rem] text-white relative overflow-hidden group">
-                                <TrendingUp size={150} className="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-110 transition-transform duration-700" />
-                                <h4 className="font-black text-lg mb-2 relative z-10">Laporan Final Aktif</h4>
-                                <div className="text-4xl font-black italic relative z-10 mb-4">{stats.terverifikasi}</div>
-                                <Button
-                                    variant="outline"
-                                    className="w-full bg-white/10 hover:bg-white text-white hover:text-slate-900 border-white/20 relative z-10 !py-3 !text-xs font-black uppercase tracking-[0.2em]"
-                                    onClick={() => window.location.href = '/admin/recap'}
-                                >
-                                    LIHAT REKAPITULASI
-                                </Button>
-                            </div>
                         </div>
                     </Card>
                 </div>

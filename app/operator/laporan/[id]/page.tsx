@@ -84,18 +84,48 @@ export default function LaporanDetailPage({ params }: { params: Promise<{ id: st
     };
 
     const handleSubmit = async () => {
-        if (!confirm('Kirim laporan ini? Data tidak bisa diubah setelah status Submitted.')) return;
+        if (!confirm('Simpan dan Kirim laporan ini? Data tidak bisa diubah setelah status Submitted.')) return;
+        
         try {
+            setIsSaving(true);
+            // Simpan data terlebih dahulu sebelum submit
+            const errors: string[] = [];
+            const resSiswa = await api.operator.updateSiswa(id, reportData.siswa);
+            if (!resSiswa?.ok) errors.push('Siswa');
+            
+            const resRekap = await api.operator.updateRekapPersonal(id, reportData.rekap_personal);
+            if (!resRekap?.ok) errors.push('Rekap');
+            
+            const resGuru = await api.operator.updateGuru(id, reportData.guru);
+            if (!resGuru?.ok) errors.push('Guru');
+            
+            const resSarpras = await api.operator.updateSarpras(id, reportData.sarpras);
+            if (!resSarpras?.ok) errors.push('Sarpras');
+            
+            const resMobiler = await api.operator.updateMobiler(id, reportData.mobiler);
+            if (!resMobiler?.ok) errors.push('Mobiler');
+            
+            const resKeuangan = await api.operator.updateKeuangan(id, reportData.keuangan);
+            if (!resKeuangan?.ok) errors.push('Keuangan');
+
+            if (errors.length > 0) {
+                alert(`Gagal menyimpan beberapa bagian (${errors.join(', ')}). Laporan tidak dikirim. Silakan periksa data.`);
+                return;
+            }
+
+            // Jika simpan sukses, baru submit
             const response = await api.operator.submitLaporan(id);
             if (response.ok) {
-                alert('Laporan berhasil dikirim!');
+                alert('Laporan berhasil disimpan dan dikirim!');
                 router.push('/operator/laporan');
             } else {
                 const data = await response.json();
                 alert(data.message || 'Gagal mengirim laporan.');
             }
         } catch (error) {
-            alert('Kesalahan koneksi');
+            alert('Terjadi kesalahan koneksi saat memproses laporan.');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -282,7 +312,7 @@ function SiswaForm({ rows, onChange }: { rows: any[], onChange: (d: any[]) => vo
     };
 
     const addRow = () => {
-        onChange([...(rows || []), { kelas: '', jumlah_rombel: null, jumlah_lk: null, jumlah_pr: null, mutasi_masuk: null, mutasi_keluar: null, keterangan: '' }]);
+        onChange([...(rows || []), { kelas: '', jumlah_rombel: 0, jumlah_lk: 0, jumlah_pr: 0, mutasi_masuk: 0, mutasi_keluar: 0, keterangan: '' }]);
     };
 
     const removeRow = (idx: number) => {
@@ -396,7 +426,7 @@ function RekapPersonalForm({ rows, onChange }: { rows: any[], onChange: (d: any[
     };
 
     const addRow = () => {
-        onChange([...(rows || []), { keadaan: '', jumlah_lk: null, jumlah_pr: null, mutasi_masuk: null, mutasi_keluar: null, keterangan: '' }]);
+        onChange([...(rows || []), { keadaan: '', jumlah_lk: 0, jumlah_pr: 0, mutasi_masuk: 0, mutasi_keluar: 0, keterangan: '' }]);
     };
 
     const removeRow = (idx: number) => {
@@ -508,7 +538,15 @@ function DetailGuruForm({ rows, onChange }: { rows: any[], onChange: (d: any[]) 
     };
 
     const addRow = () => {
-        onChange([...(rows || []), { nama_guru: '', mutasi_status: 'aktif' }]);
+        onChange([...(rows || []), { 
+            nama_guru: '', 
+            jabatan: '', 
+            lp: 'L', 
+            status_pegawai: '', 
+            jumlah_jam: 0,
+            sertifikasi: false,
+            mutasi_status: 'aktif' 
+        }]);
     };
 
     const removeRow = (idx: number) => {
@@ -628,7 +666,16 @@ function SarprasForm({ rows, onChange }: { rows: any[], onChange: (d: any[]) => 
     };
 
     const addRow = () => {
-        onChange([...(rows || []), { jenis_aset: '', luas: '', kondisi_baik: null, kondisi_rusak_ringan: null, kondisi_rusak_berat: null, kekurangan: null, perlu_rehab: null, keterangan: '' }]);
+        onChange([...(rows || []), { 
+            jenis_aset: '', 
+            luas: '', 
+            kondisi_baik: 0, 
+            kondisi_rusak_ringan: 0, 
+            kondisi_rusak_berat: 0, 
+            kekurangan: 0, 
+            perlu_rehab: 0, 
+            keterangan: '' 
+        }]);
     };
 
     const removeRow = (idx: number) => {
@@ -728,7 +775,15 @@ function MobilerForm({ rows, onChange }: { rows: any[], onChange: (d: any[]) => 
     };
 
     const addRow = () => {
-        onChange([...(rows || []), { nama_barang: '', jumlah_total: null, kondisi_baik: null, kondisi_rusak_ringan: null, kondisi_rusak_berat: null, kekurangan: null, keterangan: '' }]);
+        onChange([...(rows || []), { 
+            nama_barang: '', 
+            jumlah_total: 0, 
+            kondisi_baik: 0, 
+            kondisi_rusak_ringan: 0, 
+            kondisi_rusak_berat: 0, 
+            kekurangan: 0, 
+            keterangan: '' 
+        }]);
     };
 
     const removeRow = (idx: number) => {
@@ -826,7 +881,7 @@ function KeuanganForm({ rows, onChange }: { rows: any[], onChange: (d: any[]) =>
     };
 
     const addRow = () => {
-        onChange([...(rows || []), { uraian_kegiatan: '', volume: null, satuan: '', harga_satuan: null }]);
+        onChange([...(rows || []), { uraian_kegiatan: '', volume: 0, satuan: '', harga_satuan: 0 }]);
     };
 
     const removeRow = (idx: number) => {

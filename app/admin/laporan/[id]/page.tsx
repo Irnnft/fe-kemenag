@@ -3,7 +3,7 @@
 import React, { useState, useEffect, use } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ArrowLeft, Users, Building, Coins, Loader2, Calendar, ShieldCheck, Info } from 'lucide-react';
+import { ArrowLeft, Users, Building, Coins, Loader2, Calendar, ShieldCheck, Info, MapPin } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
@@ -61,37 +61,62 @@ export default function KasiDetailLaporanPage({ params }: { params: Promise<{ id
         <div className="max-w-[1600px] mx-auto space-y-8 pb-20 animate-fade-in px-4">
             {/* Header & Tabs Container (Not Sticky) */}
             <div className="space-y-8">
-                {/* Header Monitoring */}
-                <div className="bg-white border-[3px] border-slate-900 p-8 shadow-[6px_6px_0_0_#0f172a] rounded-[2rem] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
+                {/* Header Monitoring - Ultra-Clean & Cohesive */}
+                <div className="bg-white border-[3px] border-slate-900 p-4 shadow-[6px_6px_0_0_#0f172a] rounded-[1.5rem] flex flex-col xl:flex-row justify-between items-center gap-6">
                     <div className="flex items-center gap-5 w-full xl:w-auto">
-                        <Link href="/admin/laporan">
-                            <Button variant="outline" className="h-20 w-20 p-0 rounded-full border-[4px] border-slate-900 hover:bg-slate-900 group transition-all shadow-[6px_6px_0_0_#0f172a] flex items-center justify-center bg-white">
-                                <ArrowLeft size={44} strokeWidth={3} className="text-slate-900 group-hover:text-white transition-colors" />
-                            </Button>
-                        </Link>
-                        <div>
-                            <div className="flex items-center gap-3 mb-1">
-                                <span className="px-4 py-1.5 rounded-full text-[10px] font-black border-2 border-slate-900 uppercase tracking-widest bg-white text-slate-900">
+                        <div className="flex-1 space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className={`px-2.5 py-0.5 rounded-md text-[9px] font-black border-2 uppercase tracking-widest
+                                    ${reportData?.status_laporan === 'verified' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                      reportData?.status_laporan === 'revisi' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                                      reportData?.status_laporan === 'submitted' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                      'bg-slate-50 text-slate-700 border-slate-200'}`}>
                                     {reportData?.status_laporan}
                                 </span>
-                                <span className="bg-white text-slate-900 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 border-2 border-slate-900">
-                                    <ShieldCheck size={12} /> MODE MONITORING PIMPINAN
-                                </span>
+                                <div className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-tight ml-2">
+                                    <span>NSM: <span className="text-slate-900">{reportData?.madrasah?.nsm || '-'}</span></span>
+                                    <span className="text-slate-200">|</span>
+                                    <span>NPSN: <span className="text-slate-900">{reportData?.madrasah?.npsn || '-'}</span></span>
+                                    <span className="text-slate-200">|</span>
+                                    <span className="flex items-center gap-1 italic text-slate-500"><MapPin size={10} className="text-rose-500" /> {reportData?.madrasah?.kecamatan}</span>
+                                </div>
                             </div>
-                            <h2 className="leading-none mb-1 text-2xl font-black italic">
+                            <h2 className="leading-none text-2xl font-black italic text-slate-900 uppercase flex items-end gap-3">
                                 {reportData?.madrasah?.nama_madrasah || 'MADRASAH'}
+                                <span className="not-italic font-medium text-[10px] text-slate-400 mb-0.5 lowercase truncate max-w-[250px]">
+                                </span>
                             </h2>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                                PERIODE MONITORING: {formatBulan(reportData?.bulan_tahun)}
-                            </p>
                         </div>
                     </div>
 
-                    <div className="hidden xl:flex items-center gap-4 bg-white px-6 py-4 rounded-2xl border-2 border-slate-900 italic">
-                        <Info size={20} className="text-slate-900" />
-                        <p className="text-xs font-bold text-slate-900">
-                            Anda berada dalam mode tinjau pimpinan. Validasi dilakukan oleh Staf Penmad.
-                        </p>
+                    {/* Unified Dashboard Bar */}
+                    <div className="flex items-stretch bg-white border-[3px] border-slate-900 rounded-2xl overflow-hidden shadow-[4px_4px_0_0_#0f172a] w-full xl:w-auto h-16">
+                        {/* 1. Period Segment */}
+                        <div className="bg-slate-900 text-white px-5 flex flex-col justify-center border-r-[3px] border-slate-900 min-w-[140px]">
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">PERIODE LAPORAN</span>
+                            <span className="text-[13px] font-black italic uppercase leading-none tracking-wider">
+                                {formatBulan(reportData?.bulan_tahun)}
+                            </span>
+                        </div>
+                        
+                        {/* 2. Submit Date Segment */}
+                        <div className="bg-slate-50 px-5 flex flex-col justify-center border-r-[3px] border-slate-900 min-w-[120px]">
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5 text-center">SUBMITTED AT</span>
+                            <span className="text-[12px] font-bold text-slate-900 leading-none text-center tabular-nums">
+                                {reportData?.submitted_at ? new Date(reportData.submitted_at).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'}) : '-'}
+                            </span>
+                        </div>
+
+                        {/* 3. Status/Instruction Segment */}
+                        <div className="px-5 flex items-center gap-3 bg-white min-w-[180px]">
+                            <div className="bg-slate-100 p-1.5 rounded-lg border-2 border-slate-200 shrink-0">
+                                <ShieldCheck size={18} className="text-slate-900" />
+                            </div>
+                            <div className="flex flex-col">
+                                <p className="text-[10px] font-black text-slate-900 leading-tight uppercase">MODE TINJAU AKTIF</p>
+                                <p className="text-[8px] font-bold text-slate-400 italic leading-none mt-0.5">Validasi oleh Staf Penmad</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -137,31 +162,12 @@ export default function KasiDetailLaporanPage({ params }: { params: Promise<{ id
                     </Card>
                 </div>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="w-full">
                     <Card title="CATATAN VALIDATOR">
-                        <div className="p-6 bg-slate-100 border-2 border-slate-200 rounded-3xl min-h-[150px]">
+                        <div className="p-6 bg-slate-50 border-2 border-slate-200 rounded-3xl min-h-[120px]">
                             <p className="text-sm font-bold text-slate-500 italic">
                                 {reportData?.catatan_revisi || 'Tidak ada catatan revisi untuk periode ini.'}
                             </p>
-                        </div>
-                    </Card>
-
-                    <Card title="DATA IDENTITAS">
-                        <div className="space-y-4 font-bold text-sm">
-                            <div className="flex justify-between border-b pb-2">
-                                <span className="text-slate-400 uppercase text-[10px]">NPSN</span>
-                                <span className="text-slate-900">{reportData?.madrasah?.npsn}</span>
-                            </div>
-                            <div className="flex justify-between border-b pb-2">
-                                <span className="text-slate-400 uppercase text-[10px]">Kecamatan</span>
-                                <span className="text-slate-900 uppercase">{reportData?.madrasah?.kecamatan}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-slate-400 uppercase text-[10px]">Tgl Submit</span>
-                                <span className="text-slate-900">
-                                    {reportData?.submitted_at ? new Date(reportData.submitted_at).toLocaleDateString('id-ID') : '-'}
-                                </span>
-                            </div>
                         </div>
                     </Card>
                 </div>
@@ -196,7 +202,9 @@ function TableDataSiswa({ data }: any) {
                             <td className="p-5 border-x-2 border-slate-50 text-slate-900">{s.jumlah_pr}</td>
                             <td className="p-5 border-x-2 border-slate-50 text-slate-900">{s.mutasi_masuk || 0}</td>
                             <td className="p-5 border-x-2 border-slate-50 text-slate-900">{s.mutasi_keluar || 0}</td>
-                            <td className="p-5 font-black text-slate-900 bg-slate-50 border-x-2 border-slate-100">{Number(s.jumlah_lk || 0) + Number(s.jumlah_pr || 0)}</td>
+                            <td className="p-5 font-black text-slate-900 bg-emerald-50 border-x-2 border-slate-100">
+                                {(Number(s.jumlah_lk || 0) + Number(s.jumlah_pr || 0) + Number(s.mutasi_masuk || 0)) - Number(s.mutasi_keluar || 0)}
+                            </td>
                             <td className="p-5 text-left italic text-xs font-normal border-x-2 border-slate-50 text-slate-500">{s.keterangan || '-'}</td>
                         </tr>
                     ))}
@@ -208,8 +216,8 @@ function TableDataSiswa({ data }: any) {
                         <td className="p-6 text-center border-r-2 border-slate-200">{data?.reduce((sum: any, s: any) => sum + Number(s.jumlah_pr || 0), 0)}</td>
                         <td className="p-6 text-center border-r-2 border-slate-200">{data?.reduce((sum: any, s: any) => sum + Number(s.mutasi_masuk || 0), 0)}</td>
                         <td className="p-6 text-center border-r-2 border-slate-200">{data?.reduce((sum: any, s: any) => sum + Number(s.mutasi_keluar || 0), 0)}</td>
-                        <td className="p-6 text-center bg-slate-50 border-r-2 border-slate-200 text-base">
-                            {data?.reduce((sum: any, s: any) => sum + (Number(s.jumlah_lk || 0) + Number(s.jumlah_pr || 0)), 0)}
+                        <td className="p-6 text-center bg-emerald-50 border-r-2 border-slate-200 text-base">
+                            {data?.reduce((sum: any, s: any) => sum + ((Number(s.jumlah_lk || 0) + Number(s.jumlah_pr || 0) + Number(s.mutasi_masuk || 0)) - Number(s.mutasi_keluar || 0)), 0)}
                         </td>
                         <td className="p-6"></td>
                     </tr>
@@ -342,7 +350,9 @@ function TableDataRekapPersonal({ data }: any) {
                             <td className="p-5 border-x-2 border-slate-50 text-slate-900">{r.jumlah_pr || 0}</td>
                             <td className="p-5 border-x-2 border-slate-50 text-slate-900">{r.mutasi_masuk || 0}</td>
                             <td className="p-5 border-x-2 border-slate-50 text-slate-900">{r.mutasi_keluar || 0}</td>
-                            <td className="p-5 font-black text-slate-900 bg-slate-50 border-x-2 border-slate-100">{Number(r.jumlah_lk || 0) + Number(r.jumlah_pr || 0)}</td>
+                            <td className="p-5 font-black text-slate-900 bg-emerald-50 border-x-2 border-slate-100">
+                                {(Number(r.jumlah_lk || 0) + Number(r.jumlah_pr || 0) + Number(r.mutasi_masuk || 0)) - Number(r.mutasi_keluar || 0)}
+                            </td>
                             <td className="p-5 text-left italic text-xs font-normal border-x-2 border-slate-50 whitespace-normal text-slate-500">{r.keterangan || '-'}</td>
                         </tr>
                     ))}
@@ -354,8 +364,8 @@ function TableDataRekapPersonal({ data }: any) {
                         <td className="p-6 text-center border-r-2 border-slate-200">{data?.reduce((sum: any, r: any) => sum + Number(r.jumlah_pr || 0), 0)}</td>
                         <td className="p-6 text-center border-r-2 border-slate-200">{data?.reduce((sum: any, r: any) => sum + Number(r.mutasi_masuk || 0), 0)}</td>
                         <td className="p-6 text-center border-r-2 border-slate-200">{data?.reduce((sum: any, r: any) => sum + Number(r.mutasi_keluar || 0), 0)}</td>
-                        <td className="p-6 text-center bg-slate-50 border-r-2 border-slate-200 text-base">
-                            {data?.reduce((sum: any, r: any) => sum + (Number(r.jumlah_lk || 0) + Number(r.jumlah_pr || 0)), 0)}
+                        <td className="p-6 text-center bg-emerald-50 border-r-2 border-slate-200 text-base">
+                            {data?.reduce((sum: any, r: any) => sum + ((Number(r.jumlah_lk || 0) + Number(r.jumlah_pr || 0) + Number(r.mutasi_masuk || 0)) - Number(r.mutasi_keluar || 0)), 0)}
                         </td>
                         <td className="p-6"></td>
                     </tr>

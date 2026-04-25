@@ -21,6 +21,7 @@ export default function StaffLaporanPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [submissions, setSubmissions] = useState<any[]>([]);
     const [showTrashed, setShowTrashed] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const fetchSubmissions = async () => {
         setIsLoading(true);
@@ -47,6 +48,19 @@ export default function StaffLaporanPage() {
         return date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }).toUpperCase();
     };
 
+    const filteredSubmissions = React.useMemo(() => {
+        return submissions.filter(item => {
+            const query = searchQuery.toLowerCase();
+            const namaMadrasah = item.madrasah?.nama_madrasah?.toLowerCase() || '';
+            const periode = formatBulan(item.bulan_tahun).toLowerCase();
+            const kecamatan = item.madrasah?.kecamatan?.toLowerCase() || '';
+
+            return namaMadrasah.includes(query) || 
+                   periode.includes(query) || 
+                   kecamatan.includes(query);
+        });
+    }, [submissions, searchQuery]);
+
 
 
     return (
@@ -61,6 +75,8 @@ export default function StaffLaporanPage() {
                             type="text"
                             placeholder="Cari Madrasah atau Periode..."
                             className="w-full h-16 pl-16 pr-6 bg-white border-[3px] border-slate-900 rounded-[1.5rem] font-bold text-slate-900 placeholder:text-slate-300 outline-none shadow-[6px_6px_0_0_#f1f5f9] focus:shadow-[6px_6px_0_0_#10b98120] focus:border-emerald-600 transition-all"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                     <div className="md:col-span-4 flex items-center">
@@ -100,7 +116,7 @@ export default function StaffLaporanPage() {
                                     </td>
                                 </tr>
                             ) : (
-                                submissions.map((item) => (
+                                filteredSubmissions.map((item) => (
                                     <tr key={item.id_laporan} className="group hover:bg-slate-50 transition-colors">
                                         <td className="px-6 py-8 text-left border-b align-middle">
                                             <div className="flex items-center gap-4 text-left">

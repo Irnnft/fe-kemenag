@@ -68,7 +68,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             className="flex items-center gap-4 pl-6 border-l-2 border-slate-100 transition-all group"
                         >
                             <div className="text-right hidden sm:block">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none text-right">AKSES PIMPINAN</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none text-right">AKSES KASI PENMAD</p>
                                 <p className="text-xs font-black text-slate-900 uppercase truncate max-w-[150px]">
                                     {userName}
                                 </p>
