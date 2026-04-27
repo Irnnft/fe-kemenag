@@ -36,6 +36,7 @@ export default function KasiLaporanPage() {
     const [kecamatanFilter, setKecamatanFilter] = useState('Semua Kec.');
     const [periodeFilter, setPeriodeFilter] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('Semua Status');
 
     const fetchSubmissions = async () => {
         setIsLoading(true);
@@ -69,8 +70,9 @@ export default function KasiLaporanPage() {
         const matchesPeriode = !periodeFilter || (item.bulan_tahun && item.bulan_tahun.startsWith(periodeFilter));
         const matchesSearch = name.includes(searchQuery.toUpperCase()) ||
             (item.madrasah?.npsn && item.madrasah.npsn.includes(searchQuery));
+        const matchesStatus = statusFilter === 'Semua Status' || item.status_laporan?.toLowerCase() === statusFilter.toLowerCase();
 
-        return matchesJenjang && matchesKecamatan && matchesPeriode && matchesSearch;
+        return matchesJenjang && matchesKecamatan && matchesPeriode && matchesSearch && matchesStatus;
     });
 
     const toggleSelect = (id: number) => {
@@ -335,6 +337,7 @@ export default function KasiLaporanPage() {
                                     onClick={() => {
                                         setJenjangFilter('Semua Jenjang');
                                         setKecamatanFilter('Semua Kec.');
+                                        setStatusFilter('Semua Status');
                                         setPeriodeFilter('');
                                         setSearchQuery('');
                                         setSelectedIds(new Set());
@@ -347,7 +350,7 @@ export default function KasiLaporanPage() {
                         </div>
 
                         {/* Control Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                             <div className="relative group">
                                 <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" />
                                 <input
@@ -392,6 +395,20 @@ export default function KasiLaporanPage() {
                                 >
                                     <option value="Semua Kec.">Semua Kecamatan</option>
                                     {KECAMATAN_KAMPAR.map(k => <option key={k} value={k}>{k.toUpperCase()}</option>)}
+                                </select>
+                                <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                            </div>
+
+                            <div className="relative group">
+                                <select
+                                    className="w-full h-12 pl-4 pr-10 appearance-none bg-white border-2 border-slate-200 rounded-xl font-black text-slate-900 uppercase tracking-widest text-[10px] outline-none focus:border-emerald-500 transition-all cursor-pointer shadow-sm"
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                >
+                                    <option value="Semua Status">Semua Status</option>
+                                    <option value="SUBMITTED">SUBMITTED</option>
+                                    <option value="VERIFIED">VERIFIED</option>
+                                    <option value="REVISI">REVISI</option>
                                 </select>
                                 <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                             </div>
