@@ -38,6 +38,40 @@ export default function AuditLogsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [identityMap, setIdentityMap] = useState<Record<string, any>>({});
+
+    const fetchIdentityContext = async () => {
+        try {
+            const [resMadrasah, resUsers] = await Promise.all([
+                api.master.getMadrasah(),
+                api.master.getUsers()
+            ]);
+
+            const newMap: Record<string, any> = {};
+
+            if (resMadrasah.ok) {
+                const mData = await resMadrasah.json();
+                (mData.data || mData).forEach((m: any) => {
+                    newMap[`m_${m.npsn}`] = m.nama_madrasah;
+                });
+            }
+
+            if (resUsers.ok) {
+                const uData = await resUsers.json();
+                (uData.data || uData).forEach((u: any) => {
+                    newMap[u.username] = {
+                        name: u.name,
+                        madrasah_name: u.madrasah?.nama_madrasah,
+                        role: u.role
+                    };
+                });
+            }
+
+            setIdentityMap(newMap);
+        } catch (error) {
+            console.error('Failed to fetch context:', error);
+        }
+    };
 
     const fetchLogs = async () => {
         setIsLoading(true);
@@ -56,6 +90,7 @@ export default function AuditLogsPage() {
 
     useEffect(() => {
         fetchLogs();
+        fetchIdentityContext();
     }, []);
 
     const handleDelete = async (id: number) => {
@@ -163,11 +198,23 @@ export default function AuditLogsPage() {
     };
 
     const groupedLogs = useMemo(() => {
-        const filtered = logs.filter(log =>
-            log.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            log.subject?.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        const query = searchQuery.toLowerCase();
+        const filtered = logs.filter(log => {
+            const meta = getActionMeta(log.action);
+            const identity = identityMap[log.username];
+            const displayName = (identity?.name || log.username).toLowerCase();
+            const madrasahName = (identity?.madrasah_name || identityMap[`m_${log.username}`] || '').toLowerCase();
+            const actionLabel = meta.label.toLowerCase();
+            const details = (log.details || '').toLowerCase();
+            const subject = (log.subject || '').toLowerCase();
+
+            return displayName.includes(query) ||
+                madrasahName.includes(query) ||
+                actionLabel.includes(query) ||
+                details.includes(query) ||
+                subject.includes(query) ||
+                log.action.toLowerCase().includes(query);
+        });
 
         const groups: { [key: string]: any[] } = {};
         filtered.forEach(log => {
@@ -213,12 +260,12 @@ export default function AuditLogsPage() {
                     <table className="w-full text-left border-collapse min-w-[1000px]">
                         <thead>
                             <tr className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] bg-slate-50/50">
-                                <th className="px-6 py-6 border-b-2 border-slate-200 text-center w-20">Pilih</th>
-                                <th className="px-6 py-6 border-b-2 border-slate-200">Waktu</th>
-                                <th className="px-6 py-6 border-b-2 border-slate-200">Aktor</th>
-                                <th className="px-6 py-6 border-b-2 border-slate-200">Kegiatan</th>
-                                <th className="px-6 py-6 border-b-2 border-slate-200">Detail</th>
-                                <th className="px-6 py-6 border-b-2 border-slate-200 text-center">Aksi</th>
+                                <th className="px-6 py-6 border-b-2 border-slate-200 text-left w-20">Pilih</th>
+                                <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Waktu</th>
+                                <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Aktor</th>
+                                <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Kegiatan</th>
+                                <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Detail</th>
+                                <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y-2 divide-slate-100">
@@ -244,12 +291,12 @@ export default function AuditLogsPage() {
                                     <React.Fragment key={date}>
                                         {/* Sticky Date Row */}
                                         <tr className="bg-slate-50 shadow-sm border-y-2 border-slate-200">
-                                            <td className="px-6 py-4 text-center">
+                                            <td className="px-6 py-4 text-left">
                                                 <button
                                                     onClick={() => toggleSelectAll(groupIds)}
-                                                    className={`w-6 h-6 rounded flex items-center justify-center border-2 transition-all ${isAllInGroupSelected ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-300'}`}
+                                                    className={`w-4 h-4 rounded flex items-center justify-center border-2 transition-all ${isAllInGroupSelected ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-300'}`}
                                                 >
-                                                    {isAllInGroupSelected && <CheckSquare size={14} className="text-white" />}
+                                                    {isAllInGroupSelected && <CheckSquare size={12} className="text-white" />}
                                                 </button>
                                             </td>
                                             <td colSpan={5} className="px-6 py-4">
@@ -264,58 +311,81 @@ export default function AuditLogsPage() {
                                         {logsInGroup.map(log => {
                                             const meta = getActionMeta(log.action);
                                             const isSelected = selectedIds.includes(log.id);
+                                            const identity = identityMap[log.username];
+                                            const displayName = identity?.name || log.username;
+                                            const initials = displayName.substring(0, 2).toUpperCase();
 
                                             return (
-                                                <tr key={log.id} className={`group hover:bg-slate-50 transition-colors ${isSelected ? 'bg-emerald-50/50' : ''}`}>
-                                                    <td className="px-6 py-6 text-center align-middle">
+                                                <tr key={log.id} className={`group transition-all duration-200 ${isSelected ? 'bg-emerald-50/40' : 'hover:bg-slate-50/80'}`}>
+                                                    <td className="px-6 py-2.5 text-left align-middle">
                                                         <button
                                                             onClick={() => toggleSelect(log.id)}
-                                                            className={`w-6 h-6 rounded flex items-center justify-center border-2 mx-auto transition-all ${isSelected ? 'bg-emerald-500 border-emerald-500' : 'bg-white border-slate-200 group-hover:border-slate-900'}`}
+                                                            className={`w-4 h-4 rounded flex items-center justify-center border-2 transition-all ${isSelected ? 'bg-emerald-600 border-emerald-600' : 'bg-white border-slate-200 group-hover:border-slate-400'}`}
                                                         >
-                                                            {isSelected && <CheckSquare size={14} className="text-white" />}
+                                                            {isSelected && <CheckSquare size={10} className="text-white" />}
                                                         </button>
                                                     </td>
-                                                    <td className="px-6 py-6 align-middle">
-                                                        <div className="flex items-center gap-2 font-black text-slate-900 text-xs">
-                                                            <Clock size={14} className="text-emerald-500" />
-                                                            {new Date(log.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
+
+                                                    <td className="px-6 py-2.5 text-left align-middle">
+                                                        <div className="flex flex-col leading-tight">
+                                                            <span className="font-bold text-slate-900 text-[11px]">
+                                                                {new Date(log.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                                            </span>
+                                                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">WIB</span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-6 align-middle">
-                                                        <div className="flex flex-col gap-1">
-                                                            <span className="font-black text-slate-900 text-sm uppercase tracking-tighter truncate max-w-[120px]">
-                                                                {log.username}
-                                                            </span>
-                                                            <span className={`px-2 py-0.5 rounded text-[8px] font-black border uppercase tracking-widest w-fit ${getRoleStyle(log.role, log.username)}`}>
-                                                                {formatRole(log.role, log.username)}
-                                                            </span>
+
+                                                    <td className="px-6 py-2.5 text-left align-middle">
+                                                        <div className="flex items-center gap-3 min-w-[200px]">
+                                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-[9px] border-2 shadow-sm shrink-0 
+                                                                ${log.role?.includes('kasi') ? 'bg-emerald-50 border-emerald-200 text-emerald-700' :
+                                                                    log.role?.includes('staff') ? 'bg-blue-50 border-blue-200 text-blue-700' :
+                                                                        'bg-amber-50 border-amber-200 text-amber-700'}`}>
+                                                                {initials}
+                                                            </div>
+                                                            <div className="flex flex-col gap-0 text-left">
+                                                                <span className="font-black text-slate-900 text-[12px] uppercase tracking-tight leading-none">
+                                                                    {displayName}
+                                                                </span>
+                                                                {(identity?.madrasah_name || identityMap[`m_${log.username}`]) && (
+                                                                    <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-tight leading-normal">
+                                                                        {identity?.madrasah_name || identityMap[`m_${log.username}`]}
+                                                                    </span>
+                                                                )}
+                                                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.1em] mt-0.5 opacity-80">
+                                                                    {formatRole(log.role, log.username)}
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-6 align-middle">
-                                                        <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[9px] font-black border-2 uppercase tracking-widest ${meta.bg} ${meta.color} border-current`}>
-                                                            {meta.icon}
+
+                                                    <td className="px-6 py-2.5 text-left align-middle">
+                                                        <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider border-2 ${meta.bg} ${meta.color} border-current/10 shadow-sm`}>
+                                                            {React.cloneElement(meta.icon as React.ReactElement<any>, { size: 12 })}
                                                             {meta.label}
-                                                        </span>
+                                                        </div>
                                                     </td>
-                                                    <td className="px-6 py-6 align-middle">
-                                                        <div className="flex flex-col min-w-[200px]">
-                                                            <div className="flex items-center gap-2 mb-1">
-                                                                <ArrowUpRight size={14} className="text-emerald-500" />
-                                                                <span className="font-black text-slate-900 text-[11px] uppercase tracking-tight italic">
+
+                                                    <td className="px-6 py-2.5 text-left align-middle">
+                                                        <div className="flex flex-col max-w-[250px] text-left">
+                                                            <div className="flex items-center gap-1.5 mb-0.5 opacity-70">
+                                                                <ArrowUpRight size={10} className="text-slate-400" />
+                                                                <span className="font-black text-slate-500 text-[9px] uppercase tracking-wider">
                                                                     {log.subject || 'SISTEM'}
                                                                 </span>
                                                             </div>
-                                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest pl-4 border-l-2 border-slate-100">
-                                                                {log.details ? log.details.replace('user ', '').toUpperCase() : 'TIDAK ADA DETAIL'}
+                                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-tight line-clamp-1">
+                                                                {log.details ? log.details.replace('user ', '').toUpperCase() : 'TIDAK ADA DETAIL AKTIVITAS'}
                                                             </p>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-6 text-center align-middle">
+
+                                                    <td className="px-6 py-2.5 text-left align-middle">
                                                         <button
                                                             onClick={() => handleDelete(log.id)}
-                                                            className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                                            className="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all border border-transparent hover:border-rose-100"
                                                         >
-                                                            <Trash2 size={18} />
+                                                            <Trash2 size={16} />
                                                         </button>
                                                     </td>
                                                 </tr>
