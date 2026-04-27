@@ -33,6 +33,7 @@ export default function KasiMasterUsersPage() {
     const [formData, setFormData] = useState({
         id: '',
         username: '',
+        name: '',
         password: '',
         role: 'operator_sekolah',
         id_madrasah: ''
@@ -66,9 +67,22 @@ export default function KasiMasterUsersPage() {
     }, []);
 
     const filteredUsers = users.filter(user => {
-        const matchesSearch = user.username.toLowerCase().includes(searchQuery.toLowerCase());
+        const query = searchQuery.toLowerCase();
+        const matchesSearch = 
+            user.username.toLowerCase().includes(query) ||
+            (user.name && user.name.toLowerCase().includes(query)) ||
+            (user.madrasah?.npsn && user.madrasah.npsn.toLowerCase().includes(query)) ||
+            (user.madrasah?.nama_madrasah && user.madrasah.nama_madrasah.toLowerCase().includes(query));
+
         const matchesRole = roleFilter === 'Semua Akses' || user.role === roleFilter;
         return matchesSearch && matchesRole;
+    }).sort((a, b) => {
+        const priority: Record<string, number> = {
+            'kasi_penmad': 1,
+            'staff_penmad': 2,
+            'operator_sekolah': 3
+        };
+        return (priority[a.role] || 4) - (priority[b.role] || 4);
     });
 
     const handleSave = async (e: React.FormEvent) => {
@@ -109,7 +123,7 @@ export default function KasiMasterUsersPage() {
     };
 
     const openAddModal = () => {
-        setFormData({ id: '', username: '', password: '', role: 'operator_sekolah', id_madrasah: '' });
+        setFormData({ id: '', username: '', name: '', password: '', role: 'operator_sekolah', id_madrasah: '' });
         setModalTitle('Registrasi User Baru');
         setIsModalOpen(true);
     };
@@ -118,6 +132,7 @@ export default function KasiMasterUsersPage() {
         setFormData({
             id: item.id,
             username: item.username,
+            name: item.name || '',
             password: '',
             role: item.role,
             id_madrasah: item.id_madrasah || ''
@@ -209,11 +224,18 @@ export default function KasiMasterUsersPage() {
                                     <td className="px-6 py-8 border-b text-left">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-xl bg-white border-[3px] border-slate-900 flex items-center justify-center font-black italic text-xs shadow-[4px_4px_0_0_#0f172a] group-hover:bg-slate-900 group-hover:text-white transition-all shrink-0">
-                                                {item.username.substring(0, 2).toUpperCase()}
+                                                {(item.name || item.username).substring(0, 2).toUpperCase()}
                                             </div>
-                                            <span className="font-black text-slate-900 text-base uppercase tracking-tighter italic">
-                                                {item.username}
-                                            </span>
+                                            <div className="flex flex-col items-start text-left">
+                                                <span className="font-black text-slate-900 text-base uppercase tracking-tighter italic leading-tight">
+                                                    {item.name || item.username}
+                                                </span>
+                                                {item.madrasah?.npsn && (
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                                        NPSN: {item.madrasah.npsn}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-8 text-center border-b">
@@ -295,6 +317,15 @@ export default function KasiMasterUsersPage() {
                             </select>
                         </div>
                     )}
+
+                    <div className="space-y-2">
+                        <label className="input-label font-black text-[10px] uppercase text-slate-400 pl-1">Nama Lengkap / Jabatan</label>
+                        <Input
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="Masukkan nama lengkap atau jabatan..."
+                        />
+                    </div>
 
                     {/* Step 3: Username — auto-filled from NPSN, still editable */}
                     <div className="space-y-2">

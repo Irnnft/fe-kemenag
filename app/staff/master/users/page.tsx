@@ -76,6 +76,13 @@ export default function StaffMasterUsersPage() {
 
         const matchesRole = roleFilter === 'Semua Akses' || user.role === roleFilter;
         return matchesSearch && matchesRole;
+    }).sort((a, b) => {
+        const priority: Record<string, number> = {
+            'kasi_penmad': 1,
+            'staff_penmad': 2,
+            'operator_sekolah': 3
+        };
+        return (priority[a.role] || 4) - (priority[b.role] || 4);
     });
 
     const handleSave = async (e: React.FormEvent) => {

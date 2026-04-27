@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Card } from '@/components/ui/Card';
 import {
     Shield,
@@ -36,9 +36,11 @@ export default function AuditLogsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [logs, setLogs] = useState<any[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [dateFilter, setDateFilter] = useState('');
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [isDeleting, setIsDeleting] = useState(false);
     const [identityMap, setIdentityMap] = useState<Record<string, any>>({});
+    const dateInputRef = useRef<HTMLInputElement>(null);
 
     const fetchIdentityContext = async () => {
         try {
@@ -208,12 +210,16 @@ export default function AuditLogsPage() {
             const details = (log.details || '').toLowerCase();
             const subject = (log.subject || '').toLowerCase();
 
-            return displayName.includes(query) ||
+            const logDate = new Date(log.created_at);
+            const formattedLogDate = `${logDate.getFullYear()}-${String(logDate.getMonth() + 1).padStart(2, '0')}-${String(logDate.getDate()).padStart(2, '0')}`;
+            const isDateMatch = !dateFilter || formattedLogDate === dateFilter;
+
+            return isDateMatch && (displayName.includes(query) ||
                 madrasahName.includes(query) ||
                 actionLabel.includes(query) ||
                 details.includes(query) ||
                 subject.includes(query) ||
-                log.action.toLowerCase().includes(query);
+                log.action.toLowerCase().includes(query));
         });
 
         const groups: { [key: string]: any[] } = {};
@@ -224,7 +230,7 @@ export default function AuditLogsPage() {
         });
 
         return groups;
-    }, [logs, searchQuery]);
+    }, [logs, searchQuery, dateFilter]);
 
     const dateKeys = Object.keys(groupedLogs);
 
@@ -242,6 +248,33 @@ export default function AuditLogsPage() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
+                </div>
+
+                <div 
+                    onClick={() => dateInputRef.current?.showPicker()}
+                    className="flex bg-white border-2 border-slate-900 rounded-2xl overflow-hidden shadow-[4px_4px_0_0_#0f172a] group cursor-pointer"
+                >
+                    <div className="px-4 flex items-center bg-slate-50 border-r-2 border-slate-900">
+                        <Calendar size={20} className="text-slate-400 group-focus-within:text-emerald-600" />
+                    </div>
+                    <input
+                        ref={dateInputRef}
+                        type="date"
+                        className="py-4 px-6 outline-none font-bold text-sm text-slate-900 cursor-pointer bg-transparent [&::-webkit-calendar-picker-indicator]:hidden"
+                        value={dateFilter}
+                        onChange={(e) => setDateFilter(e.target.value)}
+                    />
+                    {dateFilter && (
+                        <button 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setDateFilter('');
+                            }}
+                            className="pr-4 bg-white text-rose-500 hover:text-rose-700 transition-colors"
+                        >
+                            <XCircle size={18} />
+                        </button>
+                    )}
                 </div>
 
                 {selectedIds.length > 0 && (
