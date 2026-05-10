@@ -295,7 +295,7 @@ export default function AuditLogsPage() {
                             <tr className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] bg-slate-50/50">
                                 <th className="px-6 py-6 border-b-2 border-slate-200 text-left w-20">Pilih</th>
                                 <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Waktu</th>
-                                <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Aktor</th>
+                                <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Role</th>
                                 <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Kegiatan</th>
                                 <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Detail</th>
                                 <th className="px-6 py-6 border-b-2 border-slate-200 text-left">Aksi</th>

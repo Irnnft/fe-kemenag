@@ -180,7 +180,7 @@ export default function StaffMasterUsersPage() {
                         >
                             <option>Semua Akses</option>
                             <option value="operator_sekolah">Operator Sekolah</option>
-                            <option value="staff_penmad">Staf Teknis</option>
+                            <option value="staff_penmad">Staf Penmad</option>
                             <option value="kasi_penmad">Pimpinan</option>
                         </select>
                     </div>
