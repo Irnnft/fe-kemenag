@@ -247,7 +247,7 @@ export default function StaffMasterUsersPage() {
                                                         'bg-slate-50 text-slate-600 border-slate-200'}`}>
                                                 <Shield size={14} />
                                                 {item.role === 'kasi_penmad' ? 'Pimpinan' :
-                                                    item.role === 'staff_penmad' ? 'Staf Teknis' :
+                                                    item.role === 'staff_penmad' ? 'Staf Penmad' :
                                                         'Operator'}
                                             </span>
                                         </div>
